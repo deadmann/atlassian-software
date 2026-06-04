@@ -442,7 +442,23 @@ helm uninstall jira -n atlassian
 ```
 
 
+# Execute Command In a Pod
 
+When Pods get ready:
+
+```bash
+kubectl get pods -n atlassian
+NAME                             READY   STATUS    RESTARTS      AGE
+jira-5ffcf85d98-dxgkq            1/1     Running   3 (93s ago)   15h
+postgres-jira-557bb875bc-ndn6c   1/1     Running   4 (93s ago)   15h
+```
+
+run following command:
+```bash
+kubectl exec <pod-name> -n atlassian -- <Command>
+# Example:
+kubectl exec jira-5ffcf85d98-dxgkq -n atlassian -- java -jar example.jar ...
+```
 
 
 

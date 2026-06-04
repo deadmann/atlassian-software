@@ -251,6 +251,11 @@ helm install jira . \
   --namespace atlassian \
   --create-namespace
 ```
+OR (Since we add namespace to the config)
+```bash
+kubectl create namespace atlassian
+helm install jira .
+```
 
 Verify:
 

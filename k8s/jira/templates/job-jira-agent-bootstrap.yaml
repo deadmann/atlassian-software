@@ -1,5 +1,8 @@
+# This job may not be required... as the image will be fetch by jira-deployment automatically and do the job
+
 apiVersion: batch/v1
 kind: Job
+namespace: {{ .Values.namespace }}
 metadata:
   name: jira-agent-bootstrap
 spec:

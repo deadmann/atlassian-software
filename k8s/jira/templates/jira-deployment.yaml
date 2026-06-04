@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jira
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jira
+  template:
+    metadata:
+      labels:
+        app: jira
+    spec:
+      initContainers:
+        - name: jira-agent-init
+          image: jira-agent-bootstrap:1.0
+          imagePullPolicy: Never # It should get copied to k8s node using scp command
+          command:
+            - sh
+            - -c
+            - |
+              cp /payload/atlassian-agent.jar /agent/atlassian-agent.jar
+          volumeMounts:
+            - name: jira-agent
+              mountPath: /agent
+
+      containers:
+        - name: jira
+          image: {{ .Values.jira.image }}
+
+          env:
+            - name: ATL_DB_DRIVER
+              value: org.postgresql.Driver
+
+            - name: ATL_DB_TYPE
+              value: postgres72
+
+            - name: ATL_JDBC_URL
+              value: jdbc:postgresql://db-jira:5432/jira
+
+            - name: ATL_JDBC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: jira-db-secret
+                  key: ATL_JDBC_USER
+
+            - name: ATL_JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jira-db-secret
+                  key: ATL_JDBC_PASSWORD
+
+            - name: JAVA_OPTS
+              value: -javaagent:/agent/atlassian-agent.jar
+
+            - name: JVM_MINIMUM_MEMORY
+              value: {{ .Values.jira.jvm.minMemory }}
+
+            - name: JVM_MAXIMUM_MEMORY
+              value: {{ .Values.jira.jvm.maxMemory }}
+
+          ports:
+            - containerPort: 8080
+
+          volumeMounts:
+            - name: jira-data
+              mountPath: /var/atlassian/application-data/jira
+
+            - name: jira-agent
+              mountPath: /agent
+
+      volumes:
+        - name: jira-data
+          persistentVolumeClaim:
+            claimName: jira-data-pvc
+
+        - name: jira-agent
+          persistentVolumeClaim:
+            claimName: jira-agent

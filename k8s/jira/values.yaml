@@ -1,0 +1,30 @@
+namespace: atlassian
+
+# Bound pods to specific worker that owns the storage...
+k8s:
+  boundWorker: ubuntuserver-k8sworker1
+
+jira:
+  image: atlassian/jira-software:latest
+
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 30081
+
+  persistence:
+    size: 20Gi
+  
+  jvm: 
+    minMemory: 512m
+    maxMemory: 2048m
+
+postgres:
+  image: postgres
+  
+  persistence:
+    size: 20Gi
+  
+secret:
+  postgresUser: jira
+  postgresPassword: DA.13jpj93%eBw_Q

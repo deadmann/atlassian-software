@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jira-data-pv
+spec:
+  capacity:
+    storage: 20Gi
+
+  accessModes:
+    - ReadWriteOnce
+
+  storageClassName: ""
+  
+  claimRef:
+    namespace: atlassian
+    name: jira-data-pvc
+
+  persistentVolumeReclaimPolicy: Retain
+
+  hostPath:
+    path: /data/k8s/jira-data
+    type: DirectoryOrCreate
+
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.k8s.boundWorker }}

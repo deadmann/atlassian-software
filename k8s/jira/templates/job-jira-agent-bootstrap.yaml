@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: jira-agent-bootstrap
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+        - name: bootstrap
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              cat /payload/atlassian-agent.jar > /data/atlassian-agent.jar
+
+          volumeMounts:
+            - name: data
+              mountPath: /data
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: jira-agent

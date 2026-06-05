@@ -2,9 +2,9 @@
 
 apiVersion: batch/v1
 kind: Job
-namespace: {{ .Values.namespace }}
 metadata:
   name: jira-agent-bootstrap
+  namespace: {{ .Values.namespace }}
 spec:
   template:
     spec:

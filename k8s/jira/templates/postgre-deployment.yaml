@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
-namespace: {{ .Values.namespace }}
 metadata:
   name: postgres-jira
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   selector:

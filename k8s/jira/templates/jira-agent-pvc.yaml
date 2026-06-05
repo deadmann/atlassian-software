@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
-namespace: {{ .Values.namespace }}
 metadata:
   name: jira-agent
+  namespace: {{ .Values.namespace }}
 spec:
   storageClassName: ""
 

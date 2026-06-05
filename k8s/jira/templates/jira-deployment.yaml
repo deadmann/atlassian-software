@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
-namespace: {{ .Values.namespace }}
 metadata:
   name: jira
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: 1
   selector:
@@ -54,6 +54,10 @@ spec:
 
             - name: JAVA_OPTS
               value: -javaagent:/agent/atlassian-agent.jar
+
+            - name: JVM_SUPPORT_RECOMMENDED_ARGS
+              value: -Datlassian.upm.signature.check.disabled=true -Dupm.plugin.upload.enabled=true
+              # value: -Datlassian.upm.signature.check.disabled=true -Datlassian.upm.signature.check.upload.disabled=true -Datlassian.upm.signature.check.marketplace.disabled=true -Dupm.plugin.upload.enabled=true
 
             - name: JVM_MINIMUM_MEMORY
               value: {{ .Values.jira.jvm.minMemory }}

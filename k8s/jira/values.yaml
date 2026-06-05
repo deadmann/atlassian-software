@@ -18,6 +18,10 @@ jira:
   jvm: 
     minMemory: 512m
     maxMemory: 2048m
+    # Disable Signature Check
+    extraOpts: "-Datlassian.upm.plugin.require.signature=false -Dupm.plugin.require.signature=false -Datlassian.upm.plugin.upload.signature.check.disabled=true"
+    ## Re-enable Signature Check
+    # extraOpts: ""
 
 postgres:
   image: postgres

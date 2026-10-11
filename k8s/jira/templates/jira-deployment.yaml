@@ -29,6 +29,7 @@ spec:
       containers:
         - name: jira
           image: {{ .Values.jira.image }}
+          imagePullPolicy: IfNotPresent
 
           env:
             - name: ATL_DB_DRIVER

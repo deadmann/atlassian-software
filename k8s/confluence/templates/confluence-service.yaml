@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: confluence
+  namespace: {{ .Values.namespace }}
+spec:
+  type: {{ .Values.confluence.service.type }}
+  selector:
+    app: confluence
+  ports:
+    - port: {{ .Values.confluence.service.port }}
+      targetPort: 8090
+      nodePort: {{ .Values.confluence.service.nodePort }}

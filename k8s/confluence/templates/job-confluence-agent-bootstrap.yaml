@@ -1,0 +1,29 @@
+# This job may not be required... as the image will be fetch by jira-deployment automatically and do the job
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: confluence-agent-bootstrap
+  namespace: {{ .Values.namespace }}
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+        - name: bootstrap
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              cat /payload/atlassian-agent.jar > /data/atlassian-agent.jar
+
+          volumeMounts:
+            - name: data
+              mountPath: /data
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: confluence-agent

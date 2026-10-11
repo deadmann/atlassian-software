@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: confluence-agent
+  namespace: {{ .Values.namespace }}
+spec:
+  storageClassName: ""
+
+  accessModes:
+    - ReadWriteOnce
+    
+  resources:
+    requests:
+      storage: 10Mi

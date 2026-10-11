@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: confluence
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: confluence
+  template:
+    metadata:
+      labels:
+        app: confluence
+    spec:
+      initContainers:
+        - name: confluence-agent-init
+          image: confluence-agent-bootstrap:1.0
+          imagePullPolicy: Never # It should get copied to k8s node using scp command
+          command:
+            - sh
+            - -c
+            - |
+              cp /payload/atlassian-agent.jar /agent/atlassian-agent.jar
+          volumeMounts:
+            - name: confluence-agent
+              mountPath: /agent
+
+      containers:
+        - name: confluence
+          image: {{ .Values.confluence.image }}
+          imagePullPolicy: IfNotPresent
+
+          env:
+            - name: ATL_DB_TYPE
+              value: postgresql
+
+            - name: ATL_JDBC_URL
+              value: jdbc:postgresql://db-confluence:5432/confluence
+
+            - name: ATL_JDBC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: confluence-db-secret
+                  key: ATL_JDBC_USER
+
+            - name: ATL_JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: confluence-db-secret
+                  key: ATL_JDBC_PASSWORD
+
+            - name: JAVA_OPTS
+              value: -javaagent:/agent/atlassian-agent.jar
+
+            - name: JVM_SUPPORT_RECOMMENDED_ARGS
+              value: -Datlassian.upm.signature.check.disabled=true -Dupm.plugin.upload.enabled=true
+
+            - name: JVM_MINIMUM_MEMORY
+              value: {{ .Values.confluence.jvm.minMemory }}
+
+            - name: JVM_MAXIMUM_MEMORY
+              value: {{ .Values.confluence.jvm.maxMemory }}
+
+          ports:
+            - containerPort: 8090
+            - containerPort: 8091
+
+          volumeMounts:
+            - name: confluence-data
+              mountPath: /var/atlassian/application-data/confluence
+
+            - name: confluence-agent
+              mountPath: /agent
+
+      volumes:
+        - name: confluence-data
+          persistentVolumeClaim:
+            claimName: confluence-data-pvc
+
+        - name: confluence-agent
+          persistentVolumeClaim:
+            claimName: confluence-agent

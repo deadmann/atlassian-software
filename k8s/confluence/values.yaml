@@ -1,0 +1,34 @@
+namespace: atlassian
+
+# Jira chart already creates the "atlassian" namespace; set true only when installing Confluence alone
+createNamespace: false
+
+# Bound pods to specific worker that owns the storage...
+k8s:
+  boundWorker: ubuntuserver-k8sworker1
+
+confluence:
+  image: atlassian/confluence:latest
+
+  service:
+    type: NodePort
+    port: 8090
+    nodePort: 30082
+
+  persistence:
+    size: 20Gi
+
+  jvm:
+    minMemory: 1024m
+    maxMemory: 2048m
+
+postgres:
+  # Confluence supports specific PostgreSQL majors only
+  image: postgres:16
+
+  persistence:
+    size: 20Gi
+
+secret:
+  postgresUser: confluence
+  postgresPassword: "f1qHW4wg-sLK_e5c"

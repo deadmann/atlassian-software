@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: confluence-data-pv
+spec:
+  capacity:
+    storage: 20Gi
+
+  accessModes:
+    - ReadWriteOnce
+
+  storageClassName: ""
+
+  claimRef:
+    namespace: atlassian
+    name: confluence-data-pvc
+
+  persistentVolumeReclaimPolicy: Retain
+
+  hostPath:
+    path: /data/k8s/confluence-data
+    type: DirectoryOrCreate
+
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - {{ .Values.k8s.boundWorker }}

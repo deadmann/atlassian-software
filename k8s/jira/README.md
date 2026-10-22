@@ -9,6 +9,7 @@ The following tools are required:
 * Helm 3
 * Docker (or compatible container runtime)
 * SSH access to cluster nodes (only required for local-path storage and offline image workflows)
+* Synced node clocks — see [NODE-TIME-SYNC.md](../NODE-TIME-SYNC.md). Wrong node time = wrong times in Jira (audit log, worklogs), regardless of Jira's timezone setting.
 
 Verify access:
 

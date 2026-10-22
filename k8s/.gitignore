@@ -1,0 +1,8 @@
+# local kubectl binary
+kubectl.exe
+
+# the build of Dockerfile.agent
+jira-agent-bootstrap.tar
+
+# HELM Chart output.yaml for debugging purpose
+output.yaml

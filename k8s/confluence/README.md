@@ -9,6 +9,7 @@ The following tools are required:
 * Helm 3
 * Docker (or compatible container runtime)
 * SSH access to cluster nodes (only required for local-path storage and offline image workflows)
+* Synced node clocks — see [NODE-TIME-SYNC.md](../NODE-TIME-SYNC.md). Wrong node time = wrong times in Confluence (page history, comments), regardless of Confluence's timezone setting.
 
 Verify access:
 
@@ -43,7 +44,7 @@ confluence:
   service:
     type: NodePort
     port: 8090
-    nodePort: 30090
+    nodePort: 30082
 
   persistence:
     size: 20Gi
@@ -214,7 +215,7 @@ When the cluster runs on VirtualBox VMs and NodePorts are reached through `127.0
 add a forward for the Confluence NodePort on the same VM that forwards Jira (`30081`):
 
 ```powershell
-& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" controlvm "Ubuntu Server - K8s" natpf1 "k8s-confluence-30090,tcp,,30090,,30090"
+& "C:\Program Files\Oracle\VirtualBox\VBoxManage.exe" controlvm "Ubuntu Server - K8s" natpf1 "k8s-confluence-30082,tcp,,30082,,30082"
 ```
 
 Verify:
@@ -227,7 +228,7 @@ Expected:
 
 ```text
 Forwarding(0)="k8s-jira-30081,tcp,,30081,,30081"
-Forwarding(1)="k8s-confluence-30090,tcp,,30090,,30090"
+Forwarding(1)="k8s-confluence-30082,tcp,,30082,,30082"
 ```
 
 ---
@@ -298,7 +299,7 @@ kubectl get svc -n atlassian
 Example:
 
 ```text
-confluence      NodePort   8090:30090/TCP
+confluence      NodePort   8090:30082/TCP
 db-confluence   ClusterIP  5432/TCP
 ```
 
@@ -373,15 +374,15 @@ Example:
 Open:
 
 ```text
-http://<node-ip>:30090
+http://<node-ip>:30082
 ```
 
 Example:
 
 ```text
-http://192.168.56.102:30090
+http://192.168.56.102:30082
 OR (VirtualBox NAT forward)
-http://127.0.0.1:30090
+http://127.0.0.1:30082
 ```
 
 You should see the Confluence setup wizard.

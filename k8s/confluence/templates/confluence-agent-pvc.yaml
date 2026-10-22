@@ -3,6 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: confluence-agent
   namespace: {{ .Values.namespace }}
+  # FIX (2026-10-15): keep the claim on `helm uninstall` so data is never detached/removed with the release.
+  annotations:
+    helm.sh/resource-policy: keep
 spec:
   storageClassName: ""
 

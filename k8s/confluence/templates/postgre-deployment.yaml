@@ -41,7 +41,14 @@ spec:
 
           volumeMounts:
             - name: postgres-data
-              mountPath: /var/lib/postgresql
+              # FIX (2026-10-15): postgres:16 stores data in /var/lib/postgresql/data and
+              # declares it as an image VOLUME. Mounting the PVC at the parent dir
+              # (/var/lib/postgresql) left the DB in the container's own volume, so it was
+              # lost on container restart. Mount the PVC exactly on the data dir instead.
+              # Jira was unaffected because postgres:18 uses /var/lib/postgresql/18/docker.
+              # TODO: upgrade to postgres:18 (pg_dump/pg_restore into a new PV) once
+              #       Confluence supports it; then change this back to /var/lib/postgresql.
+              mountPath: /var/lib/postgresql/data
 
       volumes:
         - name: postgres-data
